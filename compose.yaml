@@ -5,23 +5,10 @@ x-net-config:
   env_file: net.env
 
 services:
-  # bridge:
-  #   image: husarion/ros:galactic-ros1-bridge
-  #   restart: unless-stopped
-  #   environment:
-  #     - ROS_IP=127.0.0.1
-  #     - ROS_MASTER_URI=http://127.0.0.1:11311
-  #     - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
-  #     - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
-  #   command: >
-  #     ros2 run ros1_bridge dynamic_bridge --bridge-all-topics 
-  #   network_mode: host
-  #   ipc: host
-
-  ros-master:
-    image: ros:melodic-ros-core
+  bridge:
+    image: husarion/ros:galactic-ros1-bridge
     <<: *net-config
-    command: stdbuf -o L roscore
+    command: ros2 run ros1_bridge dynamic_bridge --bridge-all-1to2-topics
 
   openmanipulatorx:
     image: openmanipulatorx-gravity-compensation:melodic
@@ -32,9 +19,10 @@ services:
     volumes:
       - ./config/gravity_compensation.launch:/gravity_compensation.launch
     devices:
-      - /dev/ttyMANIPULATOR:/dev/manipulator
-    # command: roslaunch open_manipulator_controllers gravity_compensation_controller.launch usb_port:=/dev/ttyUSB0
-    command: roslaunch --wait /gravity_compensation.launch usb_port:=/dev/manipulator baud_rate:=1000000
+      - /dev/ttyMANIPULATOR:/dev/ttyUSB0
+    # TODO: fix
+    command: bash -c "sudo chmod 777 /dev/ttyUSB0 && \
+      roslaunch /gravity_compensation.launch usb_port:=/dev/ttyUSB0 baud_rate:=1000000"
 
   manipulator_cmd_vel_controller:
     image: openmanipulatorx-gravity-compensation:melodic
@@ -42,3 +30,13 @@ services:
     volumes:
       - ./config/manipulator_cmd_vel_controller.py:/home/maciej/catkin_ws/src/open_manipulator_controls/open_manipulator_controllers/src/manipulator_cmd_vel_controller.py
     command: rosrun open_manipulator_controllers manipulator_cmd_vel_controller.py
+
+  microros:
+    image: husarion/micro-xrce-agent:v2.4.1
+    <<: *net-config
+    command: MicroXRCEAgent udp4 --port 8888
+  
+  rosbot-xl:
+    image: husarion/rosbot-xl:humble
+    <<: *net-config
+    command: ros2 launch rosbot_xl_bringup bringup.launch.py mecanum:=False

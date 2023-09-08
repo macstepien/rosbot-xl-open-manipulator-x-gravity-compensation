@@ -63,7 +63,7 @@ while not rospy.is_shutdown():
 
     x_diff *= 4
 
-    cmd_vel_msg = Twist(Vector3(x_diff, 0, 0), Vector3(0, 0, theta_diff))
+    cmd_vel_msg = Twist(Vector3(-x_diff, 0, 0), Vector3(0, 0, theta_diff))
     cmd_vel_pub.publish(cmd_vel_msg)
 
     rate.sleep()
