@@ -5,11 +5,7 @@ x-net-config:
   env_file: net.env
 
 services:
-  bridge:
-    image: husarion/ros:galactic-ros1-bridge
-    <<: *net-config
-    command: ros2 run ros1_bridge dynamic_bridge --bridge-all-1to2-topics
-
+  # Gravity Compensation
   openmanipulatorx:
     image: openmanipulatorx-gravity-compensation:melodic
     <<: *net-config
@@ -20,9 +16,15 @@ services:
       - ./config/gravity_compensation.launch:/gravity_compensation.launch
     devices:
       - /dev/ttyMANIPULATOR:/dev/ttyUSB0
-    # TODO: fix
+    # TODO: there is a problem with permissions, this is a workaround, would be better to find some other solution
     command: bash -c "sudo chmod 777 /dev/ttyUSB0 && \
       roslaunch /gravity_compensation.launch usb_port:=/dev/ttyUSB0 baud_rate:=1000000"
+
+  # Velocity controller
+  bridge:
+    image: husarion/ros:galactic-ros1-bridge
+    <<: *net-config
+    command: ros2 run ros1_bridge dynamic_bridge --bridge-all-1to2-topics
 
   manipulator_cmd_vel_controller:
     image: openmanipulatorx-gravity-compensation:melodic
