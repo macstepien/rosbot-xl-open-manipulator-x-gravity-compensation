@@ -1,6 +1,6 @@
 # ROSbot XL + OpenManipulatorX Gravity Compensation demo
 
-This demo is based on the [gravity compensation example](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/ros_controller_experiment/) provided by the Robotis.
+This demo is based on the [gravity compensation example](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/ros_controller_experiment/#gravity-compensation) provided by the Robotis.
 
 ## Building
 
@@ -10,7 +10,7 @@ docker compose build
 
 ## Setup
 
-Before running demo, you will have to also manually change mode of the servos to `Current control`, as described in the [example](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/ros_controller_experiment/).
+Before running demo, you will have to manually change mode of the servos to `Current control`, as described in the [example](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/ros_controller_experiment/#gravity-compensation).
 
 ## Running
 
